@@ -56,9 +56,8 @@ df_avg_steps_day <- mean(daily_summary$total_steps)
 df_median_steps_day <- median(daily_summary$total_steps)
 ```
 
-The average number of steps per day is: `r df_avg_steps_day`
-
-The median is:`r df_median_steps_day`
+ * **The average number of steps per day is**: `r df_avg_steps_day`
+ * **The median is**:`r df_median_steps_day`
 
 ## What is the average daily activity pattern?
 ```{r}
@@ -77,13 +76,13 @@ plot(
 )
 ```
 
-The 5-minute interval that, on average, contains the maximum number of steps is: `r 
+**The 5-minute interval that, on average, contains the maximum number of steps is**: `r 
 max_interval <- filter(interval_summary, avg_steps == max(avg_steps))
 max_interval$interval`
-with `r max_interval$avg_steps` steps on average.
+**with** `r max_interval$avg_steps` **steps on average**.
 
 ## Imputing missing values
-Total number of missing values (i.e. NAs): `r sum(is.na(df$steps))`
+**Total number of missing values (i.e. NAs)**: `r sum(is.na(df$steps))`
 
 ```{r}
 # 5. Code to describe and show a strategy for imputing missing data
@@ -119,9 +118,8 @@ df_avg_steps_day2 <- mean(daily_summary$total_steps)
 df_median_steps_day2 <- median(daily_summary$total_steps)
 ```
 
-The average of steps per day for the filled-in dataset is: `r df_avg_steps_day2`
-
-The median is:`r df_median_steps_day2`
+ * **The average of steps per day for the filled-in dataset is**: `r df_avg_steps_day2`
+ * **The median is**:`r df_median_steps_day2`
 
 ```{r kable}
 diff <- matrix(

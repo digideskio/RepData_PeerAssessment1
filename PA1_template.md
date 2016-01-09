@@ -49,9 +49,8 @@ df_avg_steps_day <- mean(daily_summary$total_steps)
 df_median_steps_day <- median(daily_summary$total_steps)
 ```
 
-The average number of steps per day is: 10766.19
-
-The median is:10765
+ * **The average number of steps per day is**: 10766.19
+ * **The median is**:10765
 
 ## What is the average daily activity pattern?
 
@@ -73,11 +72,11 @@ plot(
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)\
 
-The 5-minute interval that, on average, contains the maximum number of steps is: 835
-with 206.1698 steps on average.
+**The 5-minute interval that, on average, contains the maximum number of steps is**: 835
+**with** 206.1698 **steps on average**.
 
 ## Imputing missing values
-Total number of missing values (i.e. NAs): 2304
+**Total number of missing values (i.e. NAs)**: 2304
 
 
 ```r
@@ -118,9 +117,8 @@ df_avg_steps_day2 <- mean(daily_summary$total_steps)
 df_median_steps_day2 <- median(daily_summary$total_steps)
 ```
 
-The average of steps per day for the filled-in dataset is: 10765.64
-
-The median is:10762
+ * **The average of steps per day for the filled-in dataset is**: 10765.64
+ * **The median is**:10762
 
 
 ```r
