@@ -144,11 +144,11 @@ kable(diff, digits=2, caption = "Table - Difference from the original dataset w/
 
 Table: Table - Difference from the original dataset w/ NAs values and the filled-in one
 
-                Average steps per day   Median
--------------  ----------------------  -------
-Original DS                  10766.19    10765
-Filled-in DS                 10765.64    10762
-Difference                       0.55        3
+              |  Average steps per day  | Median
+------------- | ----------------------  |-------
+Original DS   |               10766.19  |  10765
+Filled-in DS  |               10765.64  |  10762
+Difference    |                   0.55  |      3
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
