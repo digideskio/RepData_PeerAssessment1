@@ -5,21 +5,170 @@ output:
     keep_md: true
 ---
 
+```{r echo=FALSE}
+# Format numeric values appropriately
+# see http://stackoverflow.com/questions/30888631/knitr-displaying-digits-of-an-integer-without-scientific-notation
+inline_hook <- function(x){
+  if(is.numeric(x)){
+    paste(format(x))
+  }
+}
+knitr::knit_hooks$set(inline=inline_hook)
+```
+
+## Required library
+```{r message=FALSE}
+require(data.table)
+require(lubridate)
+require(dplyr)
+require(chron)
+require(lattice)
+require(knitr)
+```
 
 ## Loading and preprocessing the data
+```{r}
+##  1. Code for reading in the dataset and/or processing the data
+unzip("activity.zip")
+dataset  <- "activity.csv"
+df <- fread(
+  dataset, header = T, na.strings = c("NA")
+)
 
-
+## Convert dates
+df$date     <- ymd(df$date)
+df$datetime <- ymd(df$date) + minutes(df$interval)
+```
 
 ## What is mean total number of steps taken per day?
+```{r}
+# 2. Histogram of the total number of steps taken each day
+daily_summary <- df[complete.cases(df),] %>%
+  group_by(date) %>%
+  summarise( total_steps = sum(steps))
 
+hist( daily_summary$total_steps,
+      main = "Total number of steps taken each day",
+      xlab = "Total number of steps")
 
+# 3. Mean and median number of steps taken each day
+df_avg_steps_day <- mean(daily_summary$total_steps)
+df_median_steps_day <- median(daily_summary$total_steps)
+```
+
+The average number of steps per day is: `r df_avg_steps_day`
+
+The median is:`r df_median_steps_day`
 
 ## What is the average daily activity pattern?
+```{r}
+# 4. Time series plot of the average number of steps taken
+interval_summary <- df[complete.cases(df),] %>%
+  group_by(interval) %>%
+  summarise( avg_steps = mean(steps) )
 
+plot(
+  interval_summary$interval,
+  interval_summary$avg_steps,
+  type = "l",
+  main = "Average number of steps per 5-min interval",
+  xlab = "5 minutes intervals",
+  ylab = "Average steps"
+)
+```
 
+The 5-minute interval that, on average, contains the maximum number of steps is: `r 
+max_interval <- filter(interval_summary, avg_steps == max(avg_steps))
+max_interval$interval`
+with `r max_interval$avg_steps` steps on average.
 
 ## Imputing missing values
+Total number of missing values (i.e. NAs): `r sum(is.na(df$steps))`
 
+```{r}
+# 5. Code to describe and show a strategy for imputing missing data
+complete_df <- merge(df, interval_summary, by = "interval")
 
+# fill in missing values with interval average
+complete_df$steps <-
+  ifelse(
+    is.na(complete_df$steps),
+    round(complete_df$avg_steps),
+    complete_df$steps
+  )
+
+# remove unneeded column
+complete_df <- complete_df[,avg_steps := NULL]
+
+# rearrange column order
+setcolorder(complete_df, c("steps", "date", "interval", "datetime"))
+
+# 4. Histogram of the total number of steps taken each day after missing values are imputed
+daily_summary <-
+  complete_df    %>%
+  group_by(date) %>%
+  summarise( total_steps = sum(steps))
+
+hist(
+  daily_summary$total_steps,
+  main = "Total number of steps taken each day",
+  xlab = "Total number of steps"
+)
+
+df_avg_steps_day2 <- mean(daily_summary$total_steps)
+df_median_steps_day2 <- median(daily_summary$total_steps)
+```
+
+The average of steps per day for the filled-in dataset is: `r df_avg_steps_day2`
+
+The median is:`r df_median_steps_day2`
+
+```{r kable}
+diff <- matrix(
+  c(df_avg_steps_day, 
+    df_median_steps_day, 
+    df_avg_steps_day2, 
+    df_median_steps_day2,
+    df_avg_steps_day - df_avg_steps_day2,
+    df_median_steps_day - df_median_steps_day2
+  ), 
+  ncol=2, 
+  byrow=TRUE
+)
+colnames(diff) <- c("Average steps per day","Median")
+rownames(diff) <- c("Original DS", "Filled-in DS", "Difference")
+diff <- as.table(diff)
+
+kable(diff, digits=2, caption = "Table - Difference from the original dataset w/ NAs values and the filled-in one")
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+# 8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+
+complete_df$weekday <-
+  factor(
+    ifelse(
+      is.weekend(complete_df$datetime),
+      "weekend",
+      "weekday"
+    )
+)
+
+interval_summary <-
+  complete_df %>%
+  group_by(interval, weekday)    %>%
+  summarise( avg_steps = mean(steps))
+
+xyplot(
+  avg_steps ~ interval | weekday,
+  data = interval_summary,
+  pch=19,
+  main= "Average number of steps per 5-min interval",
+  xlab= "5 minutes intervals",
+  ylab= "Average steps",
+  layout=c(1,2),
+  type=c("l","l")
+)
+```

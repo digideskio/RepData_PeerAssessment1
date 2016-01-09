@@ -41,7 +41,7 @@ rm(daily_summary)
 ###
 # What is the average daily activity pattern?
 ## 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-interval_summary <- df_complete %>%
+interval_summary <- df[complete.cases(df),] %>%
   group_by(interval) %>%
   summarise( avg_steps = mean(steps))
 
@@ -55,7 +55,7 @@ plot(
 )
 
 ## 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-filter(interval_summary, avg_steps == max(avg_steps))
+max_interval <- filter(interval_summary, avg_steps == max(avg_steps))
 
 # Imputing missing values
 # Note that there are a number of days/intervals where there are missing values
@@ -64,8 +64,8 @@ filter(interval_summary, avg_steps == max(avg_steps))
 ## 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 sum(is.na(df$steps))
 
-## 2. Devise a strategy for filling in all of the missing values in the dataset. The
-## strategy does not need to be sophisticated. For example, you could use the
+## 2. Devise a strategy for filling in all of the missing values in the dataset.
+## The strategy does not need to be sophisticated. For example, you could use the
 ## mean/median for that day, or the mean for that 5-minute interval, etc.
 ## 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 complete_df <- merge(df, interval_summary, by = "interval")
